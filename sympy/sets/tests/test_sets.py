@@ -1800,3 +1800,24 @@ def test_issue_24726():
     expected_case_6 = Union(ImageSet(Lambda(n, 2*n*pi + 4*pi), Range(0, oo, 1)),
                             ImageSet(Lambda(n, 2*n*pi + 5*pi), Range(0, oo, 1)))
     assert sin_zeros.intersect(Interval(10, oo)).dummy_eq(expected_case_6)
+
+def test_issue_8830():
+    x = Symbol('x', real=True)
+    A = FiniteSet(1)
+    combinations = [
+        lambda: x < A,
+        lambda: x <= A,
+        lambda: x > A,
+        lambda: x >= A,
+        lambda: A < x,
+        lambda: A <= x,
+        lambda: A > x,
+        lambda: A >= x,
+    ]
+    for expr in combinations:
+        with raises(TypeError):
+            expr()
+    assert (x == A) is False
+    assert (A == x) is False
+    assert (x != A) is True
+    assert (A != x) is True
